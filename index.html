@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SmartShelf — Business Case DACH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f6;--white:#fff;--border:#dde2ea;--border2:#c8d0dc;
+  --text:#1a1f2e;--muted:#64748b;--light:#8896aa;
+  --navy:#0d1b2e;--navy2:#162440;
+  --blue:#1d4ed8;--blue-light:#eff4ff;
+  --amber:#b45309;--amber-bg:#fffbeb;
+  --green:#15803d;--green-bg:#f0fdf4;
+  --red:#b91c1c;--red-bg:#fef2f2;
+  --header:52px;--tabs:42px;
+}
+html,body{height:100%;font-family:'Figtree',sans-serif;font-size:13px;background:var(--bg);color:var(--text);line-height:1.5;-webkit-text-size-adjust:100%}
+
+/* ── HEADER ── */
+.header{
+  height:var(--header);background:var(--navy);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;position:sticky;top:0;z-index:100;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.header-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.3px;white-space:nowrap}
+.brand-sep{color:rgba(255,255,255,0.2);font-weight:300}
+.brand-sub{font-size:12px;color:rgba(255,255,255,0.45);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-tags{display:flex;gap:8px;flex-shrink:0}
+.h-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:.5px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);white-space:nowrap}
+.h-tag.active{background:rgba(29,78,216,0.4);color:#93b4f5}
+
+/* ── TABS ── */
+.tab-bar{
+  height:var(--tabs);background:var(--white);
+  border-bottom:2px solid var(--border);
+  display:flex;align-items:flex-end;
+  padding:0 20px;position:sticky;top:var(--header);z-index:90;
+  gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{
+  height:100%;padding:0 18px;border:none;background:none;cursor:pointer;
+  font-family:'Figtree',sans-serif;font-size:13px;font-weight:500;
+  color:var(--muted);border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;margin-bottom:-2px;
+  white-space:nowrap;flex-shrink:0;touch-action:manipulation;
+}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:600}
+
+/* ── PANELS ── */
+.panels{min-height:calc(100vh - var(--header) - var(--tabs))}
+.panel{display:none;padding:20px;gap:16px;flex-direction:column}
+.panel.active{display:flex}
+
+/* ── GRID ── */
+.row{display:grid;gap:16px}
+.col-2{grid-template-columns:1fr 1fr}
+.col-3{grid-template-columns:1fr 1fr 1fr}
+.col-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.col-13{grid-template-columns:1fr 3fr}
+.col-31{grid-template-columns:3fr 1fr}
+.col-12{grid-template-columns:1fr 2fr}
+.col-21{grid-template-columns:2fr 1fr}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.card-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card-title{font-size:12px;font-weight:600;color:var(--text);letter-spacing:.1px}
+.card-sub{font-size:11px;color:var(--muted)}
+.card-body{padding:16px}
+.card-body.p0{padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ── KPI STRIP ── */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 16px;border-top:3px solid var(--border)}
+.kpi.blue{border-top-color:var(--blue)}.kpi.amber{border-top-color:var(--amber)}
+.kpi.green{border-top-color:var(--green)}.kpi.red{border-top-color:var(--red)}
+.kpi.navy{border-top-color:var(--navy)}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.kpi-value{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.5px;line-height:1}
+.kpi.blue .kpi-value{color:var(--blue)}.kpi.amber .kpi-value{color:var(--amber)}
+.kpi.green .kpi-value{color:var(--green)}.kpi.red .kpi-value{color:var(--red)}
+.kpi.navy .kpi-value{color:var(--navy)}
+.kpi-sub{font-size:10px;color:var(--light);margin-top:4px}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:480px}
+th{padding:8px 12px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);background:#f8f9fb;border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8f9fb}
+.num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--blue)}
+.muted{color:var(--muted)}
+.bold{font-weight:600}
+.highlight td{background:var(--blue-light)!important;font-weight:600}
+.highlight td.num{color:var(--navy)}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:1px 7px;border-radius:3px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:500;white-space:nowrap}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-gray{background:#f1f3f6;color:var(--muted)}
+.badge-navy{background:#e8eef8;color:var(--navy)}
+
+/* ── PAIN CARDS ── */
+.pain-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 16px;border-left:3px solid var(--border)}
+.pain-card.blue{border-left-color:var(--blue)}.pain-card.amber{border-left-color:var(--amber)}
+.pain-card.red{border-left-color:var(--red)}.pain-card.green{border-left-color:var(--green)}
+.pain-stat{font-size:18px;font-weight:700;color:var(--text);margin:4px 0 2px}
+.pain-stat.blue{color:var(--blue)}.pain-stat.amber{color:var(--amber)}.pain-stat.red{color:var(--red)}
+.pain-label{font-size:11px;font-weight:600;color:var(--text);margin-bottom:4px}
+.pain-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ── PRODUCT ── */
+.size-nav{display:flex;gap:4px;margin-bottom:16px;padding:4px;background:#f0f2f6;border-radius:6px;flex-wrap:wrap}
+.size-btn{padding:7px 18px;border:none;background:none;border-radius:4px;cursor:pointer;font-family:'Figtree',sans-serif;font-size:12px;font-weight:600;color:var(--muted);transition:all .12s;white-space:nowrap;flex:1;min-width:80px;text-align:center;touch-action:manipulation}
+.size-btn.active{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+.size-btn:hover:not(.active){color:var(--text)}
+.shelf-wrap{background:#f8f9fb;border:1px solid var(--border);border-radius:6px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.shelf-dim-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center}
+.spec-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.spec-item{background:#f8f9fb;border:1px solid var(--border);border-radius:4px;padding:10px 12px}
+.spec-k{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.spec-v{font-size:15px;font-weight:700;color:var(--navy);margin-top:1px;font-family:'IBM Plex Mono',monospace}
+
+/* ── PRICING ── */
+.model-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:18px;position:relative}
+.model-card.recommended{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.rec-label{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:9px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;text-transform:uppercase;padding:2px 10px;border-radius:10px;white-space:nowrap}
+.model-id{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:6px;font-family:'IBM Plex Mono',monospace}
+.model-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.model-price{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--blue);margin:8px 0;line-height:1.5}
+.model-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.pro-con{font-size:11px;line-height:1.8;color:var(--muted)}
+.pro-con span{display:block}
+.pro-con span.pro::before{content:'✓ ';color:var(--green)}
+.pro-con span.con::before{content:'✗ ';color:var(--red)}
+
+/* ── PARTNERS ── */
+.partner-grid{display:flex;align-items:stretch;gap:0}
+.partner-box{flex:1;background:var(--white);border:1px solid var(--border);padding:16px;text-align:center}
+.partner-box:first-child{border-radius:6px 0 0 6px}
+.partner-box:last-child{border-radius:0 6px 6px 0}
+.partner-box+.partner-box{border-left:none}
+.partner-box.ours{background:var(--blue-light);border-color:var(--blue)}
+.partner-icon{font-size:22px;margin-bottom:8px}
+.partner-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
+.partner-loc{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-bottom:6px}
+.partner-role{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ── ROADMAP ── */
+.roadmap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.phase-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.phase-head{padding:9px 14px;font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;text-transform:uppercase}
+.phase-head.ph1{background:#fff8e1;color:#92400e}
+.phase-head.ph2{background:var(--blue-light);color:#1e3a8a}
+.phase-head.ph3{background:var(--green-bg);color:#14532d}
+.phase-body{padding:12px 14px}
+.phase-item{font-size:11px;color:var(--muted);padding:3px 0;border-bottom:1px solid #f1f3f6;line-height:1.4}
+.phase-item:last-child{border-bottom:none}
+.phase-item::before{content:'→ ';color:var(--light)}
+
+/* ── CHANNELS ── */
+.channel-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 16px}
+.channel-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
+.channel-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ── INFO BOXES ── */
+.info-box{background:#f0f4ff;border:1px solid #c7d7f5;border-radius:5px;padding:10px 14px;font-size:11px;color:#1e3a8a;line-height:1.6}
+.info-box b{color:var(--navy)}
+.warn-box{background:var(--amber-bg);border:1px solid #fde68a;border-radius:5px;padding:10px 14px;font-size:11px;color:#78350f;line-height:1.6}
+
+/* ── SECTION LABELS ── */
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px}
+.section-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.section-desc{font-size:12px;color:var(--muted);margin-top:3px}
+
+/* ── MISC ── */
+.chart-wrap{position:relative;width:100%}
+hr{border:none;border-top:1px solid var(--border);margin:4px 0}
+.sensor-row-primary td:first-child{font-weight:700;color:var(--amber)}
+.sensor-row-addon td:first-child{color:var(--blue)}
+.sensor-row-future td:first-child{color:var(--muted)}
+.sub-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;margin-top:4px}
+
+
+/* ════════════════════════════════════════
+   RESPONSIVE — via JS class on <html>
+   html.is-tablet  = ≤1024px container
+   html.is-mobile  = ≤640px  container
+════════════════════════════════════════ */
+
+/* ── TABLET ── */
+html.is-tablet .kpi-row{grid-template-columns:repeat(3,1fr)}
+html.is-tablet .col-3,html.is-tablet .col-4{grid-template-columns:1fr 1fr}
+html.is-tablet .col-13{grid-template-columns:1fr}
+html.is-tablet .roadmap{grid-template-columns:1fr 1fr}
+html.is-tablet .tab{padding:0 14px;font-size:12px}
+
+/* ── MOBILE ── */
+html.is-mobile{--header:48px;--tabs:40px}
+html.is-mobile .header{padding:0 14px}
+html.is-mobile .brand-sep,html.is-mobile .brand-sub{display:none}
+html.is-mobile .brand-name{font-size:14px}
+html.is-mobile .h-tag:not(.active){display:none}
+html.is-mobile .tab-bar{padding:0 10px;gap:0}
+html.is-mobile .tab{padding:0 11px;font-size:11px;font-weight:500}
+html.is-mobile .panel{padding:12px;gap:12px}
+html.is-mobile .kpi-row{grid-template-columns:1fr 1fr;gap:8px}
+html.is-mobile .kpi{padding:11px 12px}
+html.is-mobile .kpi-value{font-size:17px}
+html.is-mobile .kpi-sub{font-size:9px}
+html.is-mobile .row.col-2,html.is-mobile .row.col-3,html.is-mobile .row.col-4{grid-template-columns:1fr}
+html.is-mobile .card-body{padding:12px}
+html.is-mobile .card-head{padding:9px 12px}
+html.is-mobile .card-title{font-size:11px}
+html.is-mobile table{font-size:11px;min-width:420px}
+html.is-mobile th,html.is-mobile td{padding:6px 9px}
+html.is-mobile .roadmap{grid-template-columns:1fr}
+html.is-mobile .partner-grid{flex-direction:column}
+html.is-mobile .partner-box{border-radius:0!important}
+html.is-mobile .partner-box:first-child{border-radius:6px 6px 0 0!important}
+html.is-mobile .partner-box:last-child{border-radius:0 0 6px 6px!important}
+html.is-mobile .partner-box+.partner-box{border-left:1px solid var(--border);border-top:none}
+html.is-mobile .size-nav{display:grid;grid-template-columns:1fr 1fr}
+html.is-mobile .size-btn{padding:7px 4px;font-size:11px}
+html.is-mobile .spec-item{padding:8px 10px}
+html.is-mobile .spec-v{font-size:13px}
+html.is-mobile .model-card{padding:14px}
+html.is-mobile .model-name{font-size:13px}
+html.is-mobile .section-title{font-size:14px}
+html.is-mobile .pain-stat{font-size:15px}
+html.is-mobile .sub-label{font-size:12px}
+html.is-mobile .info-box,html.is-mobile .warn-box{font-size:11px;padding:9px 12px}
+html.is-mobile #shelfSvg{width:90px;height:165px}
+html.is-mobile .shelf-and-specs{flex-direction:column!important}
+
+/* Keep native media queries as fallback */
+@media (max-width:1024px){html:not(.is-mobile) .kpi-row{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:640px){.row.col-2,.row.col-3,.row.col-4{grid-template-columns:1fr}.roadmap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <span class="brand-name">SmartShelf</span>
+    <span class="brand-sep">|</span>
+    <span class="brand-sub">Business Case DACH · B2B</span>
+  </div>
+  <div class="header-tags">
+    <span class="h-tag active">B2B</span>
+    <span class="h-tag">Gastro &amp; Einzelhandel</span>
+    <span class="h-tag">2025/26</span>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<nav class="tab-bar">
+  <button class="tab active" onclick="showTab('overview',this)">Übersicht</button>
+  <button class="tab" onclick="showTab('markt',this)">Marktanalyse</button>
+  <button class="tab" onclick="showTab('produkt',this)">Produktportfolio</button>
+  <button class="tab" onclick="showTab('preise',this)">Preise &amp; Kosten</button>
+  <button class="tab" onclick="showTab('wettbewerb',this)">Wettbewerb</button>
+  <button class="tab" onclick="showTab('strategie',this)">Strategie &amp; GTM</button>
+</nav>
+
+<div class="panels">
+
+<!-- ═══ 1. ÜBERSICHT ═══ -->
+<div class="panel active" id="panel-overview">
+  <div class="kpi-row">
+    <div class="kpi blue"><div class="kpi-label">Gastrobetriebe DACH</div><div class="kpi-value">250.000+</div><div class="kpi-sub">DE ~220k · AT ~60k · CH ~23k</div></div>
+    <div class="kpi amber"><div class="kpi-label">LEH-Standorte DACH</div><div class="kpi-value">60.000+</div><div class="kpi-sub">DE ~33k · AT ~5,5k · CH ~6k</div></div>
+    <div class="kpi red"><div class="kpi-label">Food Waste AHV / Jahr</div><div class="kpi-value">1,9 Mio t</div><div class="kpi-sub">18% aller LM-Abfälle in DE</div></div>
+    <div class="kpi red"><div class="kpi-label">Reingewinn Gastro 2026</div><div class="kpi-value">3 Ct/€</div><div class="kpi-sub">41,7% rechnen mit Verlusten</div></div>
+    <div class="kpi green"><div class="kpi-label">Waste-Reduktion möglich</div><div class="kpi-value">bis −25%</div><div class="kpi-sub">Modellbetriebe Dialogforum AHV</div></div>
+    <div class="kpi navy"><div class="kpi-label">Out-of-Stock Rate LEH</div><div class="kpi-value">6–10%</div><div class="kpi-sub">Direkt messbarer Umsatzverlust</div></div>
+  </div>
+
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Marktpotenzial nach Land &amp; Segment</span><span class="card-sub">Standorte in Tausend</span></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart_market" height="200"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Wertversprechen nach Zielmarkt</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th></th><th>🍽 Gastronomie</th><th>🏪 Einzelhandel</th></tr></thead>
+          <tbody>
+            <tr><td class="bold muted">Kernproblem</td><td>Food Waste &amp; Schwund</td><td>Out-of-Stock &amp; Shrinkage</td></tr>
+            <tr><td class="bold muted">Hauptnutzen</td><td>Wareneinsatz senken</td><td>Umsatzverlust vermeiden</td></tr>
+            <tr><td class="bold muted">ROI-Zeitraum</td><td>&lt; 12 Monate</td><td>6–18 Monate</td></tr>
+            <tr><td class="bold muted">Entscheider</td><td>Inhaber / F&amp;B-Manager</td><td>Category Mgr. / Zentrale</td></tr>
+            <tr><td class="bold muted">Sales Cycle</td><td>1–6 Monate</td><td>6–18 Monate</td></tr>
+            <tr><td class="bold muted">Preismodell</td><td><span class="badge badge-blue">Hybrid (Option C)</span></td><td><span class="badge badge-navy">CapEx + Volumen</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row col-3">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Unser Modell</span></div>
+      <div class="card-body">
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px">Wir <strong style="color:var(--text)">entwickeln nicht selbst</strong> — wir kombinieren drei spezialisierte Partner zu einem Gesamtprodukt.</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0"></span><span><strong>Hupfer</strong> — Edelstahl-Regal (HACCP)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0"></span><span><strong>Incap Electronics</strong> — IoT Sensorik</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0"></span><span><strong>Eigene Cloud-Software</strong> — unser IP</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Vier Produktgrößen</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Modell</th><th>Maße B×T×H</th><th>Sensoren</th><th>Zielgruppe</th></tr></thead>
+          <tbody>
+            <tr><td class="bold">S Compact</td><td class="num">80×50×180</td><td class="num">12</td><td class="muted">Bar, kleines Restaurant</td></tr>
+            <tr><td class="bold">M Standard</td><td class="num">100×60×200</td><td class="num">20</td><td class="muted">Hotel 80 Zi., Filiale</td></tr>
+            <tr><td class="bold">L Professional</td><td class="num">120×60×200</td><td class="num">25</td><td class="muted">Hotel 200 Zi., Kette</td></tr>
+            <tr><td class="bold">XL Industrial</td><td class="num">150×60×200</td><td class="num">30</td><td class="muted">Klinik, Mensa, LEH</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Gastro Kostenstruktur 2026</span><span class="card-sub">Anteil Nettoumsatz</span></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart_cost_pie" height="170"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2. MARKTANALYSE ═══ -->
+<div class="panel" id="panel-markt">
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Marktgröße DACH — Betriebe &amp; Standorte</span><span class="card-sub">DEHOGA, WKO, GastroSuisse, EHI 2025</span></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart_country" height="200"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Führende Ketten DACH</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Unternehmen</th><th>Land</th><th>Typ</th><th>Standorte</th><th>Relevanz</th></tr></thead>
+          <tbody>
+            <tr><td class="bold">Edeka</td><td>DE</td><td class="muted">LEH</td><td class="num">5.908</td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">REWE</td><td>DE</td><td class="muted">LEH</td><td class="num">~3.700</td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Lidl DE</td><td>DE</td><td class="muted">Discount</td><td class="num">~3.250</td><td><span class="badge badge-gray">Phase 3</span></td></tr>
+            <tr><td class="bold">Aldi N+S</td><td>DE</td><td class="muted">Discount</td><td class="num">~4.200</td><td><span class="badge badge-gray">Phase 3</span></td></tr>
+            <tr><td class="bold">Spar AT</td><td>AT</td><td class="muted">LEH</td><td class="num">~1.500</td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Migros</td><td>CH</td><td class="muted">LEH</td><td class="num">~650</td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Coop CH</td><td>CH</td><td class="muted">LEH</td><td class="num">~800</td><td><span class="badge badge-blue">Retail</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-label">Pain Points — Gastronomie</div>
+  <div class="row col-4">
+    <div class="pain-card red"><div class="pain-label">🗑 Food Waste AHV</div><div class="pain-stat red">1,9 Mio t/Jahr</div><div class="pain-desc">28 t pro Klinikküche = &gt;100.000 € Verlust/Jahr. BMLEH 2024.</div></div>
+    <div class="pain-card amber"><div class="pain-label">📋 Inventuraufwand</div><div class="pain-stat amber">4–12 h/Woche</div><div class="pain-desc">Manuelle Inventur je Standort. Keine Echtzeit-Transparenz.</div></div>
+    <div class="pain-card red"><div class="pain-label">📉 Schwund &amp; Diebstahl</div><div class="pain-stat red">3–8% Wareneinsatz</div><div class="pain-desc">Bar/Spirituosen bis 12%. Bei 3% Reingewinn existenzgefährdend.</div></div>
+    <div class="pain-card amber"><div class="pain-label">⚠️ Betriebe in Verlustzone</div><div class="pain-stat amber">41,7%</div><div class="pain-desc">Speisengepr. Betriebe planen Verluste 2025. DEHOGA IV/2025.</div></div>
+  </div>
+
+  <div class="sub-label">Pain Points — Einzelhandel</div>
+  <div class="row col-4">
+    <div class="pain-card blue"><div class="pain-label">🚫 Out-of-Stock</div><div class="pain-stat blue">6–10% OOS-Rate</div><div class="pain-desc">30.000 € Tagesumsatz = bis 3.000 € entgangener Umsatz täglich.</div></div>
+    <div class="pain-card blue"><div class="pain-label">📐 Planogramm</div><div class="pain-stat blue">Nur manuell</div><div class="pain-desc">Stundenlang unerkannte Abweichungen. Kein automatisches Monitoring.</div></div>
+    <div class="pain-card blue"><div class="pain-label">🔄 Nachbestellung</div><div class="pain-stat blue">Reaktiv</div><div class="pain-desc">Bestellauslösung erst nach visuell erkanntem Leerstand.</div></div>
+    <div class="pain-card blue"><div class="pain-label">🛒 Shrinkage</div><div class="pain-stat blue">1–2% Umsatz</div><div class="pain-desc">Diebstahl &amp; Inventurdifferenzen. Sensor erkennt jede Entnahme.</div></div>
+  </div>
+
+  <div class="info-box"><strong>Regulatorischer Rückenwind:</strong> EU-Ziel bis 2030: Halbierung der Lebensmittelabfälle. BMLEH Nationale Strategie. United Against Waste / WWF Dialogforum: 7 Modellbetriebe erzielten durchschnittlich <strong>25% Waste-Reduktion</strong> (Spannbreite 10–52%).</div>
+</div>
+
+<!-- ═══ 3. PRODUKT ═══ -->
+<div class="panel" id="panel-produkt">
+  <div class="row col-2" style="align-items:start">
+    <div>
+      <div style="margin-bottom:14px">
+        <div class="section-label">Produktkonfiguration</div>
+        <div class="section-title">Modulares Lagerregal mit Wägesensorik</div>
+        <div class="section-desc">HACCP-konformer Edelstahl 1.4301. Retail Edition: 45 cm Tiefe.</div>
+      </div>
+      <div class="size-nav">
+        <button class="size-btn active" onclick="selectSize('S',this)">S — Compact</button>
+        <button class="size-btn" onclick="selectSize('M',this)">M — Standard</button>
+        <button class="size-btn" onclick="selectSize('L',this)">L — Professional</button>
+        <button class="size-btn" onclick="selectSize('XL',this)">XL — Industrial</button>
+      </div>
+      <div style="display:flex;gap:16px;align-items:start" class="shelf-and-specs">
+        <div class="shelf-wrap" style="flex-shrink:0">
+          <svg id="shelfSvg" viewBox="0 0 120 220" width="110" height="200"></svg>
+          <div class="shelf-dim-label" id="shelfLabel">S · 80×50×180 cm</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px" id="sizeTitle">Compact · S</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="sizeTarget">Bar-Backoffice, kleines Restaurant</div>
+          <div class="spec-row" id="specGrid"></div>
+          <div class="info-box" style="margin-top:10px;font-size:11px" id="sizeInfo"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="card-title">Alle Größen im Vergleich</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>Modell</th><th>B×T×H (cm)</th><th>Böden</th><th>Sensoren</th><th>BOM Sensor</th><th>Herstellkost.</th><th>Gastro Hybrid</th><th>Retail Edition</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="bold">S Compact</td><td class="num">80×50×180</td><td class="num">4</td><td class="num">12</td><td class="num">~360 €</td><td class="num">1.100–1.400 €</td><td class="num">2.490–3.490 €</td><td class="num">2.190–2.990 €</td></tr>
+            <tr><td class="bold">M Standard</td><td class="num">100×60×200</td><td class="num">5</td><td class="num">20</td><td class="num">~600 €</td><td class="num">1.600–2.000 €</td><td class="num">3.990–4.990 €</td><td class="num">3.490–4.490 €</td></tr>
+            <tr><td class="bold">L Professional</td><td class="num">120×60×200</td><td class="num">5</td><td class="num">25</td><td class="num">~750 €</td><td class="num">2.000–2.500 €</td><td class="num">4.990–5.990 €</td><td class="num">4.290–5.290 €</td></tr>
+            <tr><td class="bold">XL Industrial</td><td class="num">150×60×200</td><td class="num">5</td><td class="num">30</td><td class="num">~900 €</td><td class="num">2.500–3.200 €</td><td class="num">5.990–7.490 €</td><td class="num">5.290–6.690 €</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <div class="card-body" style="padding-top:8px">
+        <div class="sub-label">Sensor-Technologie-Übersicht</div>
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Sensor</th><th>Typ</th><th>BOM/Pkt.</th><th>Anwendung</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr class="sensor-row-primary"><td><strong>Wägezelle (Load Cell)</strong></td><td class="muted">Alu 5–50 kg</td><td class="num">25–45 €</td><td>Schüttgut, Behälter, Flaschen</td><td><span class="badge badge-amber">Primär</span></td></tr>
+            <tr class="sensor-row-addon"><td><strong>RFID Tag + Reader</strong></td><td class="muted">HF 13,56 MHz</td><td class="num">0,05–1.500 €</td><td>Einzelartikel, Spirituosen, Wein</td><td><span class="badge badge-blue">Add-on</span></td></tr>
+            <tr class="sensor-row-addon"><td><strong>Türsensor</strong></td><td class="muted">Magnetisch</td><td class="num">5–10 €</td><td>Kühlraum, Temp.-Alarm</td><td><span class="badge badge-blue">Add-on</span></td></tr>
+            <tr class="sensor-row-addon"><td><strong>Temp / Feuchte</strong></td><td class="muted">DHT22</td><td class="num">8–20 €</td><td>Weinlager, HACCP-Doku</td><td><span class="badge badge-blue">Add-on</span></td></tr>
+            <tr class="sensor-row-future"><td>Computer Vision</td><td class="muted">Kamera + KI</td><td class="num">50–500 €</td><td>MHD, Buffet-Analyse</td><td><span class="badge badge-gray">Roadmap V2</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4. PREISE & KOSTEN ═══ -->
+<div class="panel" id="panel-preise">
+  <div class="row col-3">
+    <div class="model-card">
+      <div class="model-id">OPTION A — CAPEX</div>
+      <div class="model-name">Einmalkauf + Softwarelizenz</div>
+      <div class="model-desc">Hardware einmalig, steuerlich abschreibbar (GWG). Software als Monats- oder Jahreslizenz.</div>
+      <div class="model-price">3.500–7.500 € Hardware · 49–99 €/Mo. SW</div>
+      <div class="pro-con"><span class="pro">Hoher Sofort-Cashflow</span><span class="pro">Abschreibbar; gut für Ausschreibungen</span><span class="con">Hohe Einstiegshürde Gastro</span><span class="con">Kein stabiler Recurring Revenue</span></div>
+    </div>
+    <div class="model-card recommended">
+      <div class="rec-label">★ EMPFOHLEN</div>
+      <div class="model-id">OPTION C — HYBRID</div>
+      <div class="model-name">Subventionierte HW + Abo</div>
+      <div class="model-desc">Reduzierter Einmalpreis + monatliches Abo inkl. Wartung &amp; Updates. Niedrige Hürde, stabiler MRR.</div>
+      <div class="model-price" style="color:var(--blue)">990–1.690 € Setup · 79–139 €/Mo. all-in</div>
+      <div class="pro-con"><span class="pro">Niedrige Einstiegshürde</span><span class="pro">Stabiler Recurring Revenue</span><span class="pro">Wartung &amp; Updates inklusive</span><span class="con">Hardware-Vorfinanzierung nötig</span></div>
+    </div>
+    <div class="model-card">
+      <div class="model-id">OPTION B — HAAS</div>
+      <div class="model-name">Hardware-as-a-Service</div>
+      <div class="model-desc">Alles inklusive als monatliche Pauschale. Kein Kapitaleinsatz für Kunden, reines OpEx.</div>
+      <div class="model-price">79–149 €/Mo. pro Regal · alles inklusive</div>
+      <div class="pro-con"><span class="pro">Reines OpEx für Kunden</span><span class="pro">Höchste Kundenbindung</span><span class="con">Hoher Kapitalbedarf für uns</span><span class="con">Langer ROI-Horizont</span></div>
+    </div>
+  </div>
+
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Gastro — Hybrid Pricing (Option C)</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Modell</th><th>Setup einmalig</th><th>Monatlich</th><th>Jahr 1 gesamt</th><th>Ab Jahr 2</th></tr></thead>
+          <tbody>
+            <tr><td class="bold">S Compact</td><td class="num">990 €</td><td class="num">79 €</td><td class="num">1.938 €</td><td class="num">948 €/J</td></tr>
+            <tr><td class="bold">M Standard</td><td class="num">1.290 €</td><td class="num">99 €</td><td class="num">2.478 €</td><td class="num">1.188 €/J</td></tr>
+            <tr><td class="bold">L Professional</td><td class="num">1.490 €</td><td class="num">119 €</td><td class="num">2.918 €</td><td class="num">1.428 €/J</td></tr>
+            <tr><td class="bold">XL Industrial</td><td class="num">1.690 €</td><td class="num">139 €</td><td class="num">3.358 €</td><td class="num">1.668 €/J</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Retail — Volumenrabatt (Hardware einmalig)</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Modell</th><th><span class="badge badge-green">1–10</span></th><th><span class="badge badge-blue">11–50 (−15%)</span></th><th><span class="badge badge-amber">51–200 (−25%)</span></th><th><span class="badge badge-red">200+ (−35%)</span></th></tr></thead>
+          <tbody>
+            <tr><td class="bold">S</td><td class="num">2.190 €</td><td class="num">1.862 €</td><td class="num">1.643 €</td><td class="num">1.424 €</td></tr>
+            <tr><td class="bold">M</td><td class="num">3.490 €</td><td class="num">2.967 €</td><td class="num">2.618 €</td><td class="num">2.269 €</td></tr>
+            <tr><td class="bold">L</td><td class="num">4.290 €</td><td class="num">3.647 €</td><td class="num">3.218 €</td><td class="num">2.789 €</td></tr>
+            <tr><td class="bold">XL</td><td class="num">5.290 €</td><td class="num">4.497 €</td><td class="num">3.968 €</td><td class="num">3.439 €</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div style="padding:8px 12px;font-size:10px;color:var(--muted);border-top:1px solid var(--border)">+ Software Retail: 49–99 €/Mo. Standort + 4–6 €/Regal/Mo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Bill of Materials — pro Sensorpunkt</span><span class="card-sub">EU-Preise, Mengen 100–1.000 Stk</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Komponente</th><th>Lieferant</th><th>Preis/Stk.</th><th>Anteil/Sensor</th></tr></thead>
+          <tbody>
+            <tr><td>Wägezelle Alu 5–50 kg (OIML C3)</td><td class="muted">Zemic L6H5 / HBM</td><td class="num">10–25 €</td><td class="num">10–25 €</td></tr>
+            <tr><td>HX711 24-Bit ADC</td><td class="muted">Avia Semiconductor</td><td class="num">2–4 €</td><td class="num">0,5–1 €</td></tr>
+            <tr><td>ESP32 MCU (anteilig, 8×)</td><td class="muted">Espressif / Mouser</td><td class="num">3–5 €</td><td class="num">0,5–1 €</td></tr>
+            <tr><td>WiFi Gateway Hub (anteilig)</td><td class="muted">RAK Wireless</td><td class="num">50–100 €</td><td class="num">3–6 €</td></tr>
+            <tr><td>Gehäuse, Kabel, Mechanik</td><td class="muted">EU-Standard</td><td class="num">5–15 €</td><td class="num">5–15 €</td></tr>
+            <tr style="background:#f8f9fb"><td class="bold">BOM Sensorik gesamt</td><td class="muted">—</td><td>—</td><td class="num bold">~25–45 €</td></tr>
+            <tr><td>Mechanik Hupfer (anteilig)</td><td class="muted">Hupfer Coesfeld</td><td>—</td><td class="num">~30 €</td></tr>
+            <tr><td>Montage, Kalibrierung, QC</td><td class="muted">Incap Germany</td><td>—</td><td class="num">~8 €</td></tr>
+            <tr style="background:#eff4ff"><td class="bold">Herstellkosten gesamt/Punkt</td><td>—</td><td>—</td><td class="num bold" style="color:var(--navy)">~65–83 €</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Margen nach Modell</span><span class="card-sub">Herstellkosten vs. Listenpreis</span></div>
+      <div class="card-body">
+        <div class="chart-wrap"><canvas id="chart_margin" height="190"></canvas></div>
+        <div class="info-box" style="margin-top:12px"><strong>Software als Werthebel:</strong> Modell M — Setup 1.290 € + 36× 99 € = <strong>4.854 € Kundenwert über 3 Jahre</strong>. Davon 73% aus Software (~88% Marge).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5. WETTBEWERB ═══ -->
+<div class="panel" id="panel-wettbewerb">
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Positionierungsmatrix</span><span class="card-sub">X = Hardware-Tiefe · Y = Gastro-Fokus</span></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart_competitor" height="280"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Wettbewerber-Übersicht</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Anbieter</th><th>Typ</th><th>Hardware</th><th>Gastro</th><th>Lücke</th></tr></thead>
+          <tbody>
+            <tr class="highlight"><td>⭐ SmartShelf (wir)</td><td><span class="badge badge-blue">Hw+SW</span></td><td style="color:var(--green);font-weight:600">✓</td><td style="color:var(--green);font-weight:600">✓ Hoch</td><td style="color:var(--green);font-size:11px;font-weight:600">Unser USP</td></tr>
+            <tr><td>FoodNotify</td><td><span class="badge badge-gray">SaaS</span></td><td class="muted">✗</td><td class="muted">✓ Hoch</td><td style="font-size:11px;color:var(--muted)">Keine Hardware</td></tr>
+            <tr><td>Apicbase</td><td><span class="badge badge-gray">SaaS</span></td><td class="muted">✗</td><td class="muted">✓ Mittel</td><td style="font-size:11px;color:var(--muted)">Keine Hardware</td></tr>
+            <tr><td>gastronovi</td><td><span class="badge badge-gray">All-in-One</span></td><td class="muted">~ Kasse</td><td class="muted">✓ Hoch</td><td style="font-size:11px;color:var(--muted)">Keine Sensorik</td></tr>
+            <tr><td>Choco</td><td><span class="badge badge-gray">Bestellung</span></td><td class="muted">✗</td><td class="muted">~ Mittel</td><td style="font-size:11px;color:var(--muted)">Kein Inventar</td></tr>
+            <tr><td>Mettler-Toledo SmartShelf</td><td><span class="badge badge-amber">Hw+SW</span></td><td class="muted">✓ Premium</td><td class="muted">✗ Industrie</td><td style="font-size:11px;color:var(--muted)">Zu teuer, kein Gastro</td></tr>
+            <tr><td>Würth ORSY Sensor</td><td><span class="badge badge-amber">Hardware</span></td><td class="muted">✓</td><td class="muted">✗ Handwerk</td><td style="font-size:11px;color:var(--muted)">Kein Gastro-Fokus</td></tr>
+            <tr><td>Bizerba SmartShelf</td><td><span class="badge badge-amber">Hw+SW</span></td><td class="muted">✓ Premium</td><td class="muted">~ Bäckerei</td><td style="font-size:11px;color:var(--muted)">Nicht Trockenlager</td></tr>
+            <tr><td>Trigo Vision</td><td><span class="badge badge-navy">CV/Retail</span></td><td class="muted">✓</td><td class="muted">✗ Nur Retail</td><td style="font-size:11px;color:var(--muted)">Nur Retail, stark fin.</td></tr>
+            <tr><td>AWM SmartShelf</td><td><span class="badge badge-navy">Retail</span></td><td class="muted">✓</td><td class="muted">✗ Nur Retail</td><td style="font-size:11px;color:var(--muted)">USA-Fokus, kein DACH</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box"><strong>Kernbotschaft:</strong> Software-Anbieter bedienen Gastro gut — aber ohne Hardware. Hardware-Anbieter (Mettler, Würth) haben Sensortechnik — aber kein Gastro-Produkt. <strong>Unser weißer Fleck: Hardware + Software + Gastro-Fokus.</strong></div>
+  <div class="warn-box"><strong>Retail-Risiko:</strong> Trigo Vision (Rewe, Aldi Nord, 100+ Mio. USD VC), AWM (Walmart), VusionGroup (ESL-Marktführer, börsennotiert) sind im Retail stark. Direkter Wettbewerb nicht empfohlen — Gastronomie zuerst als Wedge-Markt.</div>
+</div>
+
+<!-- ═══ 6. STRATEGIE & GTM ═══ -->
+<div class="panel" id="panel-strategie">
+  <div class="row col-2" style="align-items:start">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Drei-Partner-Architektur</span></div>
+      <div class="card-body" style="padding:0">
+        <div class="partner-grid">
+          <div class="partner-box">
+            <div class="partner-icon">🏭</div>
+            <div class="partner-name">Hupfer Metallwerke</div>
+            <div class="partner-loc">Coesfeld, Deutschland</div>
+            <div class="partner-role">HACCP-konforme Edelstahl-Regale (1.4301). Gastronomie-Standard. Modulares System.</div>
+          </div>
+          <div class="partner-box">
+            <div class="partner-icon">💡</div>
+            <div class="partner-name">Incap Electronics DE</div>
+            <div class="partner-loc">Karlsfeld + Boxberg</div>
+            <div class="partner-role">EMS/ODM-Fertigung. Hersteller Würth ORSY Sensor-Regal — identische Anwendung.</div>
+          </div>
+          <div class="partner-box ours">
+            <div class="partner-icon">☁️</div>
+            <div class="partner-name">Unser Cloud-Backend</div>
+            <div class="partner-loc">★ Unser IP</div>
+            <div class="partner-role">SaaS-Plattform: Dashboard, Alarme, Multi-Standort, API (FoodNotify, Apicbase, Kassen).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Primäre Zielkunden</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Segment</th><th>Beschreibung</th><th>Entscheider</th><th>Phase</th></tr></thead>
+          <tbody>
+            <tr><td class="bold">Hotelketten 5+ Häuser</td><td class="muted">Steigenberger, Maritim, NH, Dorint</td><td>F&amp;B Manager</td><td><span class="badge badge-amber">Phase 1</span></td></tr>
+            <tr><td class="bold">Systemgastronomie</td><td class="muted">L'Osteria, Hans im Glück, D&amp;D</td><td>Expansion Mgr.</td><td><span class="badge badge-amber">Phase 1</span></td></tr>
+            <tr><td class="bold">Klinikküchen</td><td class="muted">28 t Abfall/Jahr = &gt;100.000 € Verlust</td><td>Einkaufsleiter</td><td><span class="badge badge-amber">Phase 1</span></td></tr>
+            <tr><td class="bold">Catering-Konzerne</td><td class="muted">Compass, Aramark, Sodexo, Apetito</td><td>Zentraleinkauf</td><td><span class="badge badge-blue">Phase 2</span></td></tr>
+            <tr><td class="bold">Bio-Märkte (Retail)</td><td class="muted">Alnatura, Denn's, BioCompany</td><td>Filialleitung</td><td><span class="badge badge-blue">Phase 2</span></td></tr>
+            <tr><td class="bold">Regionale LEH-Ketten</td><td class="muted">Tegut, Feneberg, Edeka-Genoss.</td><td>IT / Zentrale</td><td><span class="badge badge-navy">Phase 3</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-label">Phasen-Roadmap (36 Monate)</div>
+  <div class="roadmap">
+    <div class="phase-card">
+      <div class="phase-head ph1">Phase 1 · 0–12 Monate · MVP &amp; Validierung</div>
+      <div class="phase-body">
+        <div class="phase-item">Sourcing-Workshop Incap + Hupfer (NDA)</div>
+        <div class="phase-item">5–10 Pilotkunden Gastro &amp; Klinik</div>
+        <div class="phase-item">Software MVP + Mobile App</div>
+        <div class="phase-item">INTERNORGA Hamburg 2027</div>
+        <div class="phase-item">Ziel: ≥3 zahlende Kunden, NPS ≥30</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-head ph2">Phase 2 · 12–24 Monate · Skalierung DACH</div>
+      <div class="phase-body">
+        <div class="phase-item">100+ aktive Standorte Gastronomie</div>
+        <div class="phase-item">METRO + Transgourmet Reseller-Vertrag</div>
+        <div class="phase-item">Bio-Markt Retail-Piloten (Alnatura)</div>
+        <div class="phase-item">API-Integration FoodNotify + Apicbase</div>
+        <div class="phase-item">Ziel: MRR-Wachstum &gt;15% MoM</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-head ph3">Phase 3 · 24–36 Monate · Retail + Expansion</div>
+      <div class="phase-body">
+        <div class="phase-item">Regionale LEH (Tegut, Edeka-Region)</div>
+        <div class="phase-item">Computer Vision Modul V2</div>
+        <div class="phase-item">BeNeLux / Skandinavien</div>
+        <div class="phase-item">Catering-Konzern Rahmenvertrag</div>
+        <div class="phase-item">Ziel: 1.000+ aktive Standorte DACH</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-label">Vertrieb &amp; Marketing</div>
+  <div class="row col-4">
+    <div class="channel-card"><div class="channel-name">Direktvertrieb</div><div class="channel-desc">Außendienst für 5+-Standort-Kunden. LinkedIn ABM auf F&amp;B-Manager. Sales Cycle 3–6 Mo.</div></div>
+    <div class="channel-card"><div class="channel-name">METRO + Transgourmet</div><div class="channel-desc">Listung B2B-Marktplatz. Größter Gastro-Außendienst DACH. Cross-Selling Küche.</div></div>
+    <div class="channel-card"><div class="channel-name">INTERNORGA Hamburg</div><div class="channel-desc">~85.000 Fachbesucher jährlich. Halle B5 Innovation Hub. Pflicht-Messe für Launch.</div></div>
+    <div class="channel-card"><div class="channel-name">DEHOGA / AHGZ / GV-Praxis</div><div class="channel-desc">Verbandskooperation, Fachpresse, Whitepaper Food Waste (25%-Reduktions-Story).</div></div>
+  </div>
+
+  <div class="info-box"><strong>Zwei-Markt-Logik:</strong> Gleiche Hardware-Plattform — zwei Märkte. Gastro (<strong>250.000+ Betriebe</strong>) als Wedge mit geringstem Wettbewerbsdruck. Retail (<strong>60.000+ Standorte</strong>, 80–600 Regale/Filiale) als Skalierungsmarkt ab Jahr 2. Kombinierter adressierbarer Markt DACH: <strong>&gt;310.000 potenzielle Standorte</strong>.</div>
+</div>
+
+</div><!-- /panels -->
+
+<script>
+// ── TABS ──
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  if(!window._ci) window._ci={};
+  if(!window._ci[id]){window._ci[id]=true;initCharts(id);}
+}
+
+// ── PRODUCT SIZES ──
+const SZ={
+  S:{name:'Compact · S',dim:'80 × 50 × 180 cm',target:'Bar-Backoffice, kleines Restaurant, Spirituosen-Lager',shelves:4,sps:3,info:'Passiert Standard-Türen (80 cm). 12 Wägeplätze decken 80/20-Kern­lager. RFID-Add-on empfohlen für Spirituosen.',specs:[['Breite','80 cm'],['Tiefe','50 cm'],['Höhe','180 cm'],['Böden','4'],['Wägeplätze','12'],['Listenpreis','2.490–3.490 €']]},
+  M:{name:'Standard · M',dim:'100 × 60 × 200 cm',target:'Mittleres Restaurant, Hotel 80 Zimmer, Retail Endcap',shelves:5,sps:4,info:'Sweet Spot. GN 1/1-Behälter passen optimal. 20 Punkte decken Kernlager eines 80-Zimmer-Hotels vollständig.',specs:[['Breite','100 cm'],['Tiefe','60 cm'],['Höhe','200 cm'],['Böden','5'],['Wägeplätze','20'],['Listenpreis','3.990–4.990 €']]},
+  L:{name:'Professional · L',dim:'120 × 60 × 200 cm',target:'Hotel 200 Zi., Systemgastronomie, Vollsortimenter-Regal',shelves:5,sps:5,info:'Nahe Tegometall-Standard (125 cm). Retail Edition (45 cm Tiefe) für LEH-Gondeln. Kettenbetriebe ab 5 Standorten.',specs:[['Breite','120 cm'],['Tiefe','60 cm'],['Höhe','200 cm'],['Böden','5'],['Wägeplätze','25'],['Listenpreis','4.990–5.990 €']]},
+  XL:{name:'Industrial · XL',dim:'150 × 60 × 200 cm',target:'Klinikküche, Mensa, Großcaterer, Hypermarkt, Cash & Carry',shelves:5,sps:6,info:'Klinik: 28 t Abfall/Küche/Jahr = >100.000 € Verlust. Verkettbar zu ganzen Lagerwänden.',specs:[['Breite','150 cm'],['Tiefe','60 cm'],['Höhe','200 cm'],['Böden','5'],['Wägeplätze','30'],['Listenpreis','5.990–7.490 €']]}
+};
+
+function drawShelf(s){
+  const d=SZ[s];
+  const rW=Math.min(d.sps*18+16,100),rH=d.shelves*34+16;
+  const ox=(120-rW)/2,oy=(220-rH)/2;
+  const sp=(rH-4)/(d.shelves+1);
+  let svg=`<rect x="${ox}" y="${oy}" width="${rW}" height="${rH}" rx="2" fill="none" stroke="#c8d0dc" stroke-width="1.2"/>`;
+  svg+=`<rect x="${ox}" y="${oy+rH-4}" width="${rW}" height="4" rx="1" fill="#dde2ea"/>`;
+  for(let i=1;i<=d.shelves;i++){
+    const sy=oy+sp*i;
+    svg+=`<rect x="${ox+2}" y="${sy}" width="${rW-4}" height="4" rx="1" fill="#e8eef8" stroke="#c8d0dc" stroke-width=".8"/>`;
+    const ss=(rW-14)/(d.sps-1||1);
+    for(let j=0;j<d.sps;j++){
+      const sx=ox+7+ss*j;
+      svg+=`<circle cx="${sx}" cy="${sy+2}" r="2.5" fill="#1d4ed8" opacity="0.75"/>`;
+    }
+  }
+  document.getElementById('shelfSvg').innerHTML=svg;
+}
+
+function selectSize(s,btn){
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d=SZ[s];
+  document.getElementById('sizeTitle').textContent=d.name;
+  document.getElementById('sizeTarget').textContent=d.target;
+  document.getElementById('shelfLabel').textContent=s+' · '+d.dim;
+  document.getElementById('sizeInfo').innerHTML='<strong>Hinweis:</strong> '+d.info;
+  document.getElementById('specGrid').innerHTML=d.specs.map(([k,v])=>`<div class="spec-item"><div class="spec-k">${k}</div><div class="spec-v">${v}</div></div>`).join('');
+  drawShelf(s);
+}
+selectSize('S',document.querySelector('.size-btn'));
+
+// ── CHARTS ──
+Chart.defaults.font.family="'Figtree',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.color='#64748b';
+Chart.defaults.borderColor='#dde2ea';
+const BL='rgba(29,78,216,0.75)',AM='rgba(180,83,9,0.75)',GR='rgba(21,128,61,0.6)',RD='rgba(185,28,28,0.7)';
+
+window._ci={overview:false};
+
+function initCharts(panel){
+  if(panel==='overview'){
+    new Chart(document.getElementById('chart_market'),{type:'bar',data:{labels:['DE','AT','CH'],datasets:[{label:'Gastronomie',data:[220,60,23],backgroundColor:BL,borderRadius:3},{label:'Einzelhandel',data:[33,5.5,6],backgroundColor:AM,borderRadius:3}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},scales:{y:{grid:{color:'#eef0f4'},ticks:{callback:v=>v+'k'}},x:{grid:{display:false}}}}});
+    new Chart(document.getElementById('chart_cost_pie'),{type:'doughnut',data:{labels:['Personal 40%','Wareneinsatz 30%','Miete 15%','Sonstiges 12%','Gewinn 3%'],datasets:[{data:[40,30,15,12,3],backgroundColor:[RD,'#d97706','#6366f1','#94a3b8','rgba(21,128,61,0.8)'],borderWidth:0}]},options:{cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8,font:{size:10}}}}}});
+  }
+  if(panel==='markt'){
+    new Chart(document.getElementById('chart_country'),{type:'bar',data:{labels:['DE Gastro','AT Gastro','CH Gastro','DE LEH','AT LEH','CH LEH'],datasets:[{data:[220,60,23,33,5.5,6],backgroundColor:[BL,BL,BL,AM,AM,AM],borderRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#eef0f4'},ticks:{callback:v=>v+'k'}},x:{grid:{display:false}}}}});
+  }
+  if(panel==='preise'){
+    new Chart(document.getElementById('chart_margin'),{type:'bar',data:{labels:['S','M','L','XL'],datasets:[{label:'Herstellkosten',data:[1250,1800,2250,2850],backgroundColor:'rgba(148,163,184,0.6)',borderRadius:3},{label:'Bruttomarge Hardware',data:[1740,2690,2740,3140],backgroundColor:BL,borderRadius:3},{label:'Software 36 Mo.',data:[948,1188,1428,1668],backgroundColor:GR,borderRadius:3}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10}}},scales:{y:{grid:{color:'#eef0f4'},stacked:false,ticks:{callback:v=>v.toLocaleString('de')+'€'}},x:{grid:{display:false}}}}});
+  }
+  if(panel==='wettbewerb'){
+    new Chart(document.getElementById('chart_competitor'),{type:'bubble',data:{datasets:[
+      {label:'SmartShelf (wir)',data:[{x:8.5,y:9,r:14}],backgroundColor:'rgba(29,78,216,0.85)',borderColor:'#1d4ed8',borderWidth:2},
+      {label:'FoodNotify',data:[{x:0.5,y:9,r:9}],backgroundColor:'rgba(100,116,139,0.6)'},
+      {label:'gastronovi',data:[{x:1.5,y:7.5,r:10}],backgroundColor:'rgba(100,116,139,0.55)'},
+      {label:'Apicbase',data:[{x:0.3,y:7,r:8}],backgroundColor:'rgba(100,116,139,0.5)'},
+      {label:'Choco',data:[{x:0.2,y:6,r:11}],backgroundColor:'rgba(21,128,61,0.5)'},
+      {label:'Mettler-Toledo',data:[{x:9,y:2.5,r:11}],backgroundColor:AM},
+      {label:'Würth ORSY',data:[{x:8.5,y:1.5,r:8}],backgroundColor:'rgba(180,83,9,0.45)'},
+      {label:'Bizerba',data:[{x:7.5,y:5,r:9}],backgroundColor:'rgba(99,102,241,0.5)'},
+      {label:'Trigo Vision',data:[{x:8,y:1,r:12}],backgroundColor:'rgba(185,28,28,0.4)'},
+      {label:'AWM',data:[{x:7,y:1.5,r:8}],backgroundColor:'rgba(185,28,28,0.3)'},
+    ]},options:{scales:{x:{min:0,max:10,title:{display:true,text:'← Nur Software | Hardware + Software →',color:'#94a3b8'},grid:{color:'#eef0f4'}},y:{min:0,max:10,title:{display:true,text:'← Kein Gastro | Gastro-Fokus →',color:'#94a3b8'},grid:{color:'#eef0f4'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label}}}}});
+  }
+}
+initCharts('overview');
+
+// ── RESPONSIVE CLASS SWITCHER ──
+// Uses ResizeObserver so it reacts to the actual
+// rendered container width — works inside iframes too.
+function applyBreakpoint() {
+  var w = document.documentElement.clientWidth;
+  var html = document.documentElement;
+  html.classList.remove('is-mobile', 'is-tablet');
+  if (w <= 640) {
+    html.classList.add('is-mobile');
+  } else if (w <= 1024) {
+    html.classList.add('is-tablet');
+  }
+}
+applyBreakpoint();
+if (window.ResizeObserver) {
+  new ResizeObserver(applyBreakpoint).observe(document.documentElement);
+} else {
+  window.addEventListener('resize', applyBreakpoint);
+}
+</script>
+</body>
+</html>
