@@ -250,6 +250,51 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
 /* Keep native media queries as fallback */
 @media (max-width:1024px){html:not(.is-mobile) .kpi-row{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:640px){.row.col-2,.row.col-3,.row.col-4{grid-template-columns:1fr}.roadmap{grid-template-columns:1fr}}
+
+/* ── SUPERSCRIPT SOURCE REFS ── */
+sup.sn{font-size:8px;vertical-align:super;color:var(--blue);font-family:'IBM Plex Mono',monospace;line-height:0;cursor:help;font-weight:600}
+sup.sn:hover{color:var(--navy)}
+
+/* ── SMARTORDER ── */
+.flow-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:stretch}
+.flow-step{background:var(--white);border:1px solid var(--border);border-radius:0;padding:14px 12px;text-align:center;position:relative}
+.flow-step:first-child{border-radius:6px 0 0 6px}
+.flow-step:last-child{border-radius:0 6px 6px 0}
+.flow-step+.flow-step{border-left:none}
+.flow-step::after{content:'›';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--blue);font-size:18px;font-weight:700;z-index:2;background:var(--white);padding:0 2px}
+.flow-step:last-child::after{display:none}
+.flow-icon{font-size:20px;margin-bottom:6px}
+.flow-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px}
+.flow-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.flywheel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.fw-step{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;border-top:3px solid var(--border)}
+.fw-step.fw1{border-top-color:#94a3b8}.fw-step.fw2{border-top-color:var(--amber)}.fw-step.fw3{border-top-color:var(--blue)}.fw-step.fw4{border-top-color:var(--green)}
+.fw-period{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:4px}
+.fw-acc{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin:4px 0}
+.fw-step.fw1 .fw-acc{color:#94a3b8}.fw-step.fw2 .fw-acc{color:var(--amber)}.fw-step.fw3 .fw-acc{color:var(--blue)}.fw-step.fw4 .fw-acc{color:var(--green)}
+.fw-label{font-size:10px;color:var(--muted);line-height:1.4}
+html.is-mobile .flow-grid{grid-template-columns:1fr}
+html.is-mobile .flow-step{border-radius:0;border-left:1px solid var(--border)!important;border-top:none}
+html.is-mobile .flow-step:first-child{border-radius:6px 6px 0 0;border-top:1px solid var(--border)!important}
+html.is-mobile .flow-step:last-child{border-radius:0 0 6px 6px}
+html.is-mobile .flow-step::after{content:'↓';right:auto;left:50%;top:auto;bottom:-12px;transform:translateX(-50%);background:var(--white)}
+html.is-mobile .flywheel{grid-template-columns:1fr 1fr}
+
+/* ── QUELLEN ── */
+.src-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.src-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.src-card-head{padding:9px 14px;font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px;text-transform:uppercase;background:#f8f9fb;border-bottom:1px solid var(--border);color:var(--muted)}
+.src-list{padding:10px 0}
+.src-item{display:flex;gap:10px;padding:8px 14px;border-bottom:1px solid #f1f3f6;align-items:flex-start}
+.src-item:last-child{border-bottom:none}
+.src-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);min-width:22px;padding-top:1px;flex-shrink:0}
+.src-body{flex:1;min-width:0}
+.src-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.4}
+.src-detail{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.4}
+.src-link{font-size:10px;color:var(--blue);word-break:break-all;text-decoration:none;font-family:'IBM Plex Mono',monospace}
+.src-link:hover{text-decoration:underline}
+.src-tag{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:#f1f3f6;padding:1px 6px;border-radius:2px;display:inline-block;margin-top:2px}
+html.is-mobile .src-grid{grid-template-columns:1fr}
 </style>
 </head>
 <body>
@@ -273,9 +318,11 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
   <button class="tab active" onclick="showTab('overview',this)">Übersicht</button>
   <button class="tab" onclick="showTab('markt',this)">Marktanalyse</button>
   <button class="tab" onclick="showTab('produkt',this)">Produktportfolio</button>
+  <button class="tab" onclick="showTab('smartorder',this)">SmartOrder KI</button>
   <button class="tab" onclick="showTab('preise',this)">Preise &amp; Kosten</button>
   <button class="tab" onclick="showTab('wettbewerb',this)">Wettbewerb</button>
   <button class="tab" onclick="showTab('strategie',this)">Strategie &amp; GTM</button>
+  <button class="tab" onclick="showTab('quellen',this)">Quellen</button>
 </nav>
 
 <div class="panels">
@@ -283,12 +330,12 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
 <!-- ═══ 1. ÜBERSICHT ═══ -->
 <div class="panel active" id="panel-overview">
   <div class="kpi-row">
-    <div class="kpi blue"><div class="kpi-label">Gastrobetriebe DACH</div><div class="kpi-value">250.000+</div><div class="kpi-sub">DE ~220k · AT ~60k · CH ~23k</div></div>
-    <div class="kpi amber"><div class="kpi-label">LEH-Standorte DACH</div><div class="kpi-value">60.000+</div><div class="kpi-sub">DE ~33k · AT ~5,5k · CH ~6k</div></div>
-    <div class="kpi red"><div class="kpi-label">Food Waste AHV / Jahr</div><div class="kpi-value">1,9 Mio t</div><div class="kpi-sub">18% aller LM-Abfälle in DE</div></div>
-    <div class="kpi red"><div class="kpi-label">Reingewinn Gastro 2026</div><div class="kpi-value">3 Ct/€</div><div class="kpi-sub">41,7% rechnen mit Verlusten</div></div>
-    <div class="kpi green"><div class="kpi-label">Waste-Reduktion möglich</div><div class="kpi-value">bis −25%</div><div class="kpi-sub">Modellbetriebe Dialogforum AHV</div></div>
-    <div class="kpi navy"><div class="kpi-label">Out-of-Stock Rate LEH</div><div class="kpi-value">6–10%</div><div class="kpi-sub">Direkt messbarer Umsatzverlust</div></div>
+    <div class="kpi blue"><div class="kpi-label">Gastrobetriebe DACH</div><div class="kpi-value">250.000+</div><div class="kpi-sub">DE ~220k · AT ~60k · CH ~23k <sup class="sn" title="Quelle [10]: DEHOGA Bundesverband">[10]</sup></div></div>
+    <div class="kpi amber"><div class="kpi-label">LEH-Standorte DACH</div><div class="kpi-value">60.000+</div><div class="kpi-sub">DE ~33k · AT ~5,5k · CH ~6k <sup class="sn" title="Quellen [1][2]: EHI, filialstandorte.de">[1,2]</sup></div></div>
+    <div class="kpi red"><div class="kpi-label">Food Waste AHV / Jahr</div><div class="kpi-value">1,9 Mio t</div><div class="kpi-sub">18% aller LM-Abfälle in DE <sup class="sn" title="Quelle [12]: BMLEH Nationale Strategie">[12]</sup></div></div>
+    <div class="kpi red"><div class="kpi-label">Reingewinn Gastro 2026</div><div class="kpi-value">3 Ct/€</div><div class="kpi-sub">41,7% rechnen mit Verlusten <sup class="sn" title="Quelle [10]: DEHOGA Zahlenspiegel 2025">[10]</sup></div></div>
+    <div class="kpi green"><div class="kpi-label">Waste-Reduktion möglich</div><div class="kpi-value">bis −25%</div><div class="kpi-sub">Modellbetriebe Dialogforum AHV <sup class="sn" title="Quelle [11]: WWF / United Against Waste">[11]</sup></div></div>
+    <div class="kpi navy"><div class="kpi-label">Out-of-Stock Rate LEH</div><div class="kpi-value">6–10%</div><div class="kpi-sub">Direkt messbarer Umsatzverlust <sup class="sn" title="Quellen [9][14]: Dataintelo, GS1">[9,14]</sup></div></div>
   </div>
 
   <div class="row col-2">
@@ -365,13 +412,13 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
         <table>
           <thead><tr><th>Unternehmen</th><th>Land</th><th>Typ</th><th>Standorte</th><th>Relevanz</th></tr></thead>
           <tbody>
-            <tr><td class="bold">Edeka</td><td>DE</td><td class="muted">LEH</td><td class="num">5.908</td><td><span class="badge badge-blue">Retail</span></td></tr>
-            <tr><td class="bold">REWE</td><td>DE</td><td class="muted">LEH</td><td class="num">~3.700</td><td><span class="badge badge-blue">Retail</span></td></tr>
-            <tr><td class="bold">Lidl DE</td><td>DE</td><td class="muted">Discount</td><td class="num">~3.250</td><td><span class="badge badge-gray">Phase 3</span></td></tr>
-            <tr><td class="bold">Aldi N+S</td><td>DE</td><td class="muted">Discount</td><td class="num">~4.200</td><td><span class="badge badge-gray">Phase 3</span></td></tr>
-            <tr><td class="bold">Spar AT</td><td>AT</td><td class="muted">LEH</td><td class="num">~1.500</td><td><span class="badge badge-blue">Retail</span></td></tr>
-            <tr><td class="bold">Migros</td><td>CH</td><td class="muted">LEH</td><td class="num">~650</td><td><span class="badge badge-blue">Retail</span></td></tr>
-            <tr><td class="bold">Coop CH</td><td>CH</td><td class="muted">LEH</td><td class="num">~800</td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Edeka</td><td>DE</td><td class="muted">LEH</td><td class="num">5.908 <sup class="sn" title="Quelle [3]: Lebensmittel Praxis Top 30">[3]</sup></td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">REWE</td><td>DE</td><td class="muted">LEH</td><td class="num">~3.700 <sup class="sn" title="Quelle [3]: Lebensmittel Praxis Top 30">[3]</sup></td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Lidl DE</td><td>DE</td><td class="muted">Discount</td><td class="num">~3.250 <sup class="sn" title="Quelle [2]: filialstandorte.de">[2]</sup></td><td><span class="badge badge-gray">Phase 3</span></td></tr>
+            <tr><td class="bold">Aldi N+S</td><td>DE</td><td class="muted">Discount</td><td class="num">~4.200 <sup class="sn" title="Quelle [2]: filialstandorte.de">[2]</sup></td><td><span class="badge badge-gray">Phase 3</span></td></tr>
+            <tr><td class="bold">Spar AT</td><td>AT</td><td class="muted">LEH</td><td class="num">~1.500 <sup class="sn" title="Quelle [1]: EHI Retail Institute">[1]</sup></td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Migros</td><td>CH</td><td class="muted">LEH</td><td class="num">~650 <sup class="sn" title="Quelle [1]: EHI Retail Institute">[1]</sup></td><td><span class="badge badge-blue">Retail</span></td></tr>
+            <tr><td class="bold">Coop CH</td><td>CH</td><td class="muted">LEH</td><td class="num">~800 <sup class="sn" title="Quelle [1]: EHI Retail Institute">[1]</sup></td><td><span class="badge badge-blue">Retail</span></td></tr>
           </tbody>
         </table>
         </div>
@@ -381,21 +428,21 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
 
   <div class="sub-label">Pain Points — Gastronomie</div>
   <div class="row col-4">
-    <div class="pain-card red"><div class="pain-label">🗑 Food Waste AHV</div><div class="pain-stat red">1,9 Mio t/Jahr</div><div class="pain-desc">28 t pro Klinikküche = &gt;100.000 € Verlust/Jahr. BMLEH 2024.</div></div>
-    <div class="pain-card amber"><div class="pain-label">📋 Inventuraufwand</div><div class="pain-stat amber">4–12 h/Woche</div><div class="pain-desc">Manuelle Inventur je Standort. Keine Echtzeit-Transparenz.</div></div>
-    <div class="pain-card red"><div class="pain-label">📉 Schwund &amp; Diebstahl</div><div class="pain-stat red">3–8% Wareneinsatz</div><div class="pain-desc">Bar/Spirituosen bis 12%. Bei 3% Reingewinn existenzgefährdend.</div></div>
-    <div class="pain-card amber"><div class="pain-label">⚠️ Betriebe in Verlustzone</div><div class="pain-stat amber">41,7%</div><div class="pain-desc">Speisengepr. Betriebe planen Verluste 2025. DEHOGA IV/2025.</div></div>
+    <div class="pain-card red"><div class="pain-label">🗑 Food Waste AHV</div><div class="pain-stat red">1,9 Mio t/Jahr</div><div class="pain-desc">28 t pro Klinikküche = &gt;100.000 € Verlust/Jahr. <sup class="sn" title="Quelle [12]: BMLEH Nationale Strategie">[12]</sup></div></div>
+    <div class="pain-card amber"><div class="pain-label">📋 Inventuraufwand</div><div class="pain-stat amber">4–12 h/Woche</div><div class="pain-desc">Manuelle Inventur je Standort. Keine Echtzeit-Transparenz. <sup class="sn" title="Quelle [10]: DEHOGA Zahlenspiegel">[10]</sup></div></div>
+    <div class="pain-card red"><div class="pain-label">📉 Schwund &amp; Diebstahl</div><div class="pain-stat red">3–8% Wareneinsatz</div><div class="pain-desc">Bar/Spirituosen bis 12%. Bei 3% Reingewinn existenzgefährdend. <sup class="sn" title="Quelle [10]: DEHOGA Zahlenspiegel">[10]</sup></div></div>
+    <div class="pain-card amber"><div class="pain-label">⚠️ Betriebe in Verlustzone</div><div class="pain-stat amber">41,7%</div><div class="pain-desc">Speisengepr. Betriebe planen Verluste 2025. DEHOGA IV/2025. <sup class="sn" title="Quelle [10]: DEHOGA Bundesverband">[10]</sup></div></div>
   </div>
 
   <div class="sub-label">Pain Points — Einzelhandel</div>
   <div class="row col-4">
-    <div class="pain-card blue"><div class="pain-label">🚫 Out-of-Stock</div><div class="pain-stat blue">6–10% OOS-Rate</div><div class="pain-desc">30.000 € Tagesumsatz = bis 3.000 € entgangener Umsatz täglich.</div></div>
-    <div class="pain-card blue"><div class="pain-label">📐 Planogramm</div><div class="pain-stat blue">Nur manuell</div><div class="pain-desc">Stundenlang unerkannte Abweichungen. Kein automatisches Monitoring.</div></div>
-    <div class="pain-card blue"><div class="pain-label">🔄 Nachbestellung</div><div class="pain-stat blue">Reaktiv</div><div class="pain-desc">Bestellauslösung erst nach visuell erkanntem Leerstand.</div></div>
-    <div class="pain-card blue"><div class="pain-label">🛒 Shrinkage</div><div class="pain-stat blue">1–2% Umsatz</div><div class="pain-desc">Diebstahl &amp; Inventurdifferenzen. Sensor erkennt jede Entnahme.</div></div>
+    <div class="pain-card blue"><div class="pain-label">🚫 Out-of-Stock</div><div class="pain-stat blue">6–10% OOS-Rate</div><div class="pain-desc">30.000 € Tagesumsatz = bis 3.000 € entgangener Umsatz täglich. <sup class="sn" title="Quellen [9][14]: Dataintelo, GS1 Germany">[9,14]</sup></div></div>
+    <div class="pain-card blue"><div class="pain-label">📐 Planogramm</div><div class="pain-stat blue">Nur manuell</div><div class="pain-desc">Stundenlang unerkannte Abweichungen. Kein automatisches Monitoring. <sup class="sn" title="Quelle [9]: Dataintelo Market Report">[9]</sup></div></div>
+    <div class="pain-card blue"><div class="pain-label">🔄 Nachbestellung</div><div class="pain-stat blue">Reaktiv</div><div class="pain-desc">Bestellauslösung erst nach visuell erkanntem Leerstand. SmartOrder löst dies proaktiv.</div></div>
+    <div class="pain-card blue"><div class="pain-label">🛒 Shrinkage</div><div class="pain-stat blue">1–2% Umsatz</div><div class="pain-desc">Diebstahl &amp; Inventurdifferenzen. Sensor erkennt jede Entnahme. <sup class="sn" title="Quelle [14]: GS1 Germany Out-of-Stock Studie">[14]</sup></div></div>
   </div>
 
-  <div class="info-box"><strong>Regulatorischer Rückenwind:</strong> EU-Ziel bis 2030: Halbierung der Lebensmittelabfälle. BMLEH Nationale Strategie. United Against Waste / WWF Dialogforum: 7 Modellbetriebe erzielten durchschnittlich <strong>25% Waste-Reduktion</strong> (Spannbreite 10–52%).</div>
+  <div class="info-box"><strong>Regulatorischer Rückenwind:</strong> EU-Ziel bis 2030: Halbierung der Lebensmittelabfälle. BMLEH Nationale Strategie.<sup class="sn" title="Quelle [12]: BMLEH">[12]</sup> United Against Waste / WWF Dialogforum: 7 Modellbetriebe erzielten durchschnittlich <strong>25% Waste-Reduktion</strong> (Spannbreite 10–52%). <sup class="sn" title="Quelle [11]: WWF / United Against Waste Dialogforum AHV">[11]</sup></div>
 </div>
 
 <!-- ═══ 3. PRODUKT ═══ -->
@@ -463,7 +510,180 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
   </div>
 </div>
 
-<!-- ═══ 4. PREISE & KOSTEN ═══ -->
+<!-- ═══ 4. SMARTORDER KI ═══ -->
+<div class="panel" id="panel-smartorder">
+
+  <div class="kpi-row">
+    <div class="kpi blue"><div class="kpi-label">Bestellgenauigkeit</div><div class="kpi-value">>90%</div><div class="kpi-sub">nach 6 Monaten Betrieb <sup class="sn" title="Quelle [13]: McKinsey AI in Retail">[13]</sup></div></div>
+    <div class="kpi green"><div class="kpi-label">Waste-Reduktion</div><div class="kpi-value">−20–30%</div><div class="kpi-sub">durch KI-Bedarfsprognose <sup class="sn" title="Quelle [13]: McKinsey AI Demand Forecasting">[13]</sup></div></div>
+    <div class="kpi amber"><div class="kpi-label">Zeitersparnis Einkauf</div><div class="kpi-value">bis −70%</div><div class="kpi-sub">vs. manuelle Bestellplanung</div></div>
+    <div class="kpi navy"><div class="kpi-label">Daten-Lerneffekt</div><div class="kpi-value">+15 PP</div><div class="kpi-sub">Genauigkeit je 6 Monate Betrieb</div></div>
+    <div class="kpi green"><div class="kpi-label">Kassensystem-Typen</div><div class="kpi-value">eigenes</div><div class="kpi-sub">+ offene API für Drittanbieter</div></div>
+    <div class="kpi blue"><div class="kpi-label">Geschäftsmodell</div><div class="kpi-value">HW+SaaS</div><div class="kpi-sub">Hardware einmalig · SW als Abo</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">SmartOrder — Systemarchitektur: Vom Sensor zur Bestellung</span><span class="card-sub">Vollintegrierte Kette · Sensor → Lager → Kasse → KI → Lieferant</span></div>
+    <div class="card-body">
+      <div class="flow-grid">
+        <div class="flow-step">
+          <div class="flow-icon">⚖️</div>
+          <div class="flow-title">Wägezelle</div>
+          <div class="flow-desc">Echtzeit-Gewichtsmessung je Regalfach. Jede Entnahme & Befüllung wird erfasst — 24/7, automatisch.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">☁️</div>
+          <div class="flow-title">Lagersystem</div>
+          <div class="flow-desc">Cloud-Inventar: aktueller Bestand, Verbrauchshistorie, Mindestmengen je Artikel.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">🖥️</div>
+          <div class="flow-title">Kassensystem</div>
+          <div class="flow-desc">Eigenes SmartOrder-Kassensystem oder API-Anbindung (gastronovi, orderbird, Lightspeed). Umsatz- & Verbrauchsdaten fließen direkt ein.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">🤖</div>
+          <div class="flow-title">KI-Analyse</div>
+          <div class="flow-desc">Maschinelles Lernen erkennt Muster: Wochentage, Saison, Events, Sonderverkäufe. Prognose künftiger Verbräuche je Artikel.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">🛒</div>
+          <div class="flow-title">Warenkorb</div>
+          <div class="flow-desc">Automatisch generierter Bestellvorschlag: optimale Mengen je Lieferant. Ein Klick zum Absenden — oder vollautomatisch.</div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px"><strong>Kern-Idee:</strong> Das System kennt nicht nur was im Regal liegt — es weiß, was <em>morgen</em> gebraucht wird. Je länger es läuft, desto präziser die Prognose. Daten aus Sensor, Kasse und Lieferhistorie verschmelzen zu einer einzigen Bestellempfehlung.</div>
+    </div>
+  </div>
+
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">Daten-Schwungrad — Genauigkeit wächst mit der Zeit</span><span class="card-sub">Maschinelles Lernen verbessert Prognosequalität kontinuierlich</span></div>
+      <div class="card-body">
+        <div class="flywheel">
+          <div class="fw-step fw1">
+            <div class="fw-period">Monat 1–3</div>
+            <div class="fw-acc" style="color:#94a3b8">~70%</div>
+            <div class="fw-label">Baseline. Datensammlung. Manuelle Korrekturen noch häufig.</div>
+          </div>
+          <div class="fw-step fw2">
+            <div class="fw-period">Monat 3–6</div>
+            <div class="fw-acc">~80%</div>
+            <div class="fw-label">Wochenmuster erkannt. Erste verlässliche Bestellvorschläge.</div>
+          </div>
+          <div class="fw-step fw3">
+            <div class="fw-period">Monat 6–12</div>
+            <div class="fw-acc">~88%</div>
+            <div class="fw-label">Saisonalität integriert. Korrekturrate sinkt deutlich.</div>
+          </div>
+          <div class="fw-step fw4">
+            <div class="fw-period">Ab Jahr 2</div>
+            <div class="fw-acc">>93%</div>
+            <div class="fw-label">Events, Feiertage, Lieferzeiten. System läuft weitgehend autonom.</div>
+          </div>
+        </div>
+        <div class="warn-box" style="margin-top:12px"><strong>Wechselbarriere:</strong> Je länger ein Betrieb das System nutzt, desto spezifischer wird das trainierte Modell — und desto höher der Aufwand für einen Wechsel. Das schafft strukturelle Kundenbindung über die reine Vertragsebene hinaus.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Kassensystem-Integration</span><span class="card-sub">Eigene Lösung + offene API</span></div>
+      <div class="card-body">
+        <div class="sub-label" style="margin-top:0">Eigenes SmartOrder-Kassensystem</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px">Für Betriebe ohne bestehendes Kassensystem bieten wir eine <strong style="color:var(--text)">eigene, sofort einsatzbereite Lösung</strong> an — direkt ab Werk mit dem Sensor-Regal verbunden. Keine Integrationsarbeit, keine Kompatibilitätsprobleme. Plug &amp; Play.</div>
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Modus</th><th>Beschreibung</th><th>Aufwand</th></tr></thead>
+          <tbody>
+            <tr><td class="bold" style="color:var(--green)">SmartOrder Kasse</td><td class="muted">Eigene Kassenlösung, direkt verbunden</td><td class="muted">Null — sofort fertig</td></tr>
+            <tr><td class="bold" style="color:var(--blue)">API-Integration</td><td class="muted">gastronovi, orderbird, Lightspeed, TCPOS</td><td class="muted">1–3 Tage Setup</td></tr>
+            <tr><td class="bold" style="color:var(--amber)">CSV / Webhook</td><td class="muted">Beliebige Drittsysteme via Export</td><td class="muted">Woche</td></tr>
+            <tr><td class="bold" style="color:var(--muted)">ERP-Anbindung</td><td class="muted">SAP, DATEV, Xentral (Enterprise)</td><td class="muted">Projekt</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="info-box" style="margin-top:10px;font-size:11px">Die <strong>Sensordaten fließen bidirektional</strong>: Kassenbuchungen validieren Entnahmen, Entnahmen ergänzen Kassendaten. Beide Systeme werden gemeinsam schlauer.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">Software-Pakete — SmartOrder Abo-Stufen</span><span class="card-sub">Hardware einmalig subventioniert verkauft · Software als monatliches Abo</span></div>
+    <div class="card-body">
+      <div class="row col-3" style="margin-bottom:0">
+        <div class="model-card">
+          <div class="model-id">TIER 1 — BASIS</div>
+          <div class="model-name">SmartShelf Monitor</div>
+          <div class="model-desc">Bestandsüberwachung, Alarme bei Unterschreitung, Dashboard, Mobile App. Ohne Bedarfsprognose.</div>
+          <div class="model-price">79–99 €/Mo. · im Hybrid-Setup (990–1.290 € HW)</div>
+          <div class="pro-con"><span class="pro">Niedriger Einstieg</span><span class="pro">Sofort einsatzbereit</span><span class="con">Keine Prognose</span><span class="con">Kein Kassenanschluss</span></div>
+        </div>
+        <div class="model-card recommended">
+          <div class="rec-label">★ EMPFOHLEN</div>
+          <div class="model-id">TIER 2 — SMARTORDER PRO</div>
+          <div class="model-name">SmartShelf + KI-Bestellung</div>
+          <div class="model-desc">Alles aus Tier 1 plus KI-Bedarfsprognose, automatischer Warenkorb, Lieferantenanbindung, Kassensystem-Integration.</div>
+          <div class="model-price" style="color:var(--blue)">119–139 €/Mo. · Setup 1.290–1.490 € HW</div>
+          <div class="pro-con"><span class="pro">KI-Prognose &amp; Warenkorb</span><span class="pro">Kassensystem-Anbindung</span><span class="pro">Selbstlernend</span><span class="con">Trainingsphase 1–3 Monate</span></div>
+        </div>
+        <div class="model-card">
+          <div class="model-id">TIER 3 — ENTERPRISE</div>
+          <div class="model-name">SmartShelf Multi-Standort</div>
+          <div class="model-desc">Alles aus Tier 2 plus Multi-Standort-Konsolidierung, ERP-Integration (SAP, DATEV), dedizierter Account Manager, SLA 99,9%.</div>
+          <div class="model-price">Auf Anfrage · ab 199 €/Mo./Standort</div>
+          <div class="pro-con"><span class="pro">Zentrales Einkaufsmanagement</span><span class="pro">ERP-Anbindung</span><span class="pro">Kettenweite Optimierung</span><span class="con">Implementierungsprojekt nötig</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row col-2">
+    <div class="card">
+      <div class="card-head"><span class="card-title">ROI-Beispielrechnung — Restaurant M-Standard</span><span class="card-sub">Konservative Schätzung, Jahr 1</span></div>
+      <div class="card-body p0">
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Position</th><th>Annahme</th><th>Effekt / Jahr</th></tr></thead>
+          <tbody>
+            <tr><td>Wareneinsatz p.a.</td><td class="muted">Restaurant, 250.000 € Umsatz × 30%</td><td class="num">75.000 €</td></tr>
+            <tr><td>Waste-Reduktion −20%</td><td class="muted">durch präzise Bedarfsprognose <sup class="sn" title="Quelle [13]: McKinsey AI Retail">[13]</sup></td><td class="num bold" style="color:var(--green)">+ 4.500 €/J</td></tr>
+            <tr><td>OOS-Vermeidung</td><td class="muted">Umsatzrückgewinn ca. 2% Umsatz</td><td class="num bold" style="color:var(--green)">+ 5.000 €/J</td></tr>
+            <tr><td>Zeitersparnis Einkauf</td><td class="muted">3 h/Woche × 20 €/h × 52</td><td class="num bold" style="color:var(--green)">+ 3.120 €/J</td></tr>
+            <tr style="background:#f0fdf4"><td class="bold">Gesamt-Nutzen</td><td></td><td class="num bold" style="color:var(--green);font-size:13px">≈ 12.620 €/J</td></tr>
+            <tr><td>Kosten SmartOrder Pro</td><td class="muted">Setup 1.290 € + 12 × 119 €</td><td class="num" style="color:var(--red)">−2.718 €/J</td></tr>
+            <tr style="background:#eff4ff"><td class="bold">Netto-ROI Jahr 1</td><td></td><td class="num bold" style="color:var(--navy);font-size:13px">≈ 9.900 € · ROI 364%</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Warum Hardware subventioniert?</span><span class="card-sub">Strategische Logik des Geschäftsmodells</span></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="pain-card blue" style="border-left-color:var(--blue)">
+            <div class="pain-label">Niedrige Einstiegshürde</div>
+            <div class="pain-desc">990–1.490 € Setup statt 3.500–6.000 € Vollpreis. Kunden entscheiden schneller, Piloten starten früher.</div>
+          </div>
+          <div class="pain-card green" style="border-left-color:var(--green)">
+            <div class="pain-label">Stabiler Recurring Revenue</div>
+            <div class="pain-desc">Hardware-Marge wird durch SaaS-Abo über 24–36 Monate zurückgewonnen — mit deutlich höheren Margen.</div>
+          </div>
+          <div class="pain-card amber" style="border-left-color:var(--amber)">
+            <div class="pain-label">Daten als strategischer Asset</div>
+            <div class="pain-desc">Jeder Betrieb, der SmartOrder nutzt, verbessert die KI-Modelle für alle. Netzwerkeffekt auf Datenebene.</div>
+          </div>
+          <div class="pain-card navy" style="border-left-color:var(--navy)">
+            <div class="pain-label">Lock-in durch Daten, nicht Vertrag</div>
+            <div class="pain-desc">Das trainierte Modell ist standortspezifisch. Wechselkosten steigen mit jedem Betriebsmonat organisch.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ 4b. PREISE & KOSTEN ═══ -->
 <div class="panel" id="panel-preise">
   <div class="row col-3">
     <div class="model-card">
@@ -579,9 +799,9 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
             <tr><td>Choco</td><td><span class="badge badge-gray">Bestellung</span></td><td class="muted">✗</td><td class="muted">~ Mittel</td><td style="font-size:11px;color:var(--muted)">Kein Inventar</td></tr>
             <tr><td>Mettler-Toledo SmartShelf</td><td><span class="badge badge-amber">Hw+SW</span></td><td class="muted">✓ Premium</td><td class="muted">✗ Industrie</td><td style="font-size:11px;color:var(--muted)">Zu teuer, kein Gastro</td></tr>
             <tr><td>Würth ORSY Sensor</td><td><span class="badge badge-amber">Hardware</span></td><td class="muted">✓</td><td class="muted">✗ Handwerk</td><td style="font-size:11px;color:var(--muted)">Kein Gastro-Fokus</td></tr>
-            <tr><td>Bizerba SmartShelf</td><td><span class="badge badge-amber">Hw+SW</span></td><td class="muted">✓ Premium</td><td class="muted">~ Bäckerei</td><td style="font-size:11px;color:var(--muted)">Nicht Trockenlager</td></tr>
-            <tr><td>Trigo Vision</td><td><span class="badge badge-navy">CV/Retail</span></td><td class="muted">✓</td><td class="muted">✗ Nur Retail</td><td style="font-size:11px;color:var(--muted)">Nur Retail, stark fin.</td></tr>
-            <tr><td>AWM SmartShelf</td><td><span class="badge badge-navy">Retail</span></td><td class="muted">✓</td><td class="muted">✗ Nur Retail</td><td style="font-size:11px;color:var(--muted)">USA-Fokus, kein DACH</td></tr>
+            <tr><td>Bizerba SmartShelf <sup class="sn" title="Quelle [7]: Bizerba SmartShelf">[7]</sup></td><td><span class="badge badge-amber">Hw+SW</span></td><td class="muted">✓ Premium</td><td class="muted">~ Bäckerei</td><td style="font-size:11px;color:var(--muted)">Nicht Trockenlager</td></tr>
+            <tr><td>Trigo Vision <sup class="sn" title="Quelle [4]: Trigo Vision">[4]</sup></td><td><span class="badge badge-navy">CV/Retail</span></td><td class="muted">✓</td><td class="muted">✗ Nur Retail</td><td style="font-size:11px;color:var(--muted)">Nur Retail, stark fin.</td></tr>
+            <tr><td>AWM SmartShelf <sup class="sn" title="Quelle [5]: AWM Smart Shelf">[5]</sup></td><td><span class="badge badge-navy">Retail</span></td><td class="muted">✓</td><td class="muted">✗ Nur Retail</td><td style="font-size:11px;color:var(--muted)">USA-Fokus, kein DACH</td></tr>
           </tbody>
         </table>
         </div>
@@ -589,7 +809,7 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
     </div>
   </div>
   <div class="info-box"><strong>Kernbotschaft:</strong> Software-Anbieter bedienen Gastro gut — aber ohne Hardware. Hardware-Anbieter (Mettler, Würth) haben Sensortechnik — aber kein Gastro-Produkt. <strong>Unser weißer Fleck: Hardware + Software + Gastro-Fokus.</strong></div>
-  <div class="warn-box"><strong>Retail-Risiko:</strong> Trigo Vision (Rewe, Aldi Nord, 100+ Mio. USD VC), AWM (Walmart), VusionGroup (ESL-Marktführer, börsennotiert) sind im Retail stark. Direkter Wettbewerb nicht empfohlen — Gastronomie zuerst als Wedge-Markt.</div>
+  <div class="warn-box"><strong>Retail-Risiko:</strong> Trigo Vision <sup class="sn" title="Quelle [4]: trigoretail.com">[4]</sup> (Rewe, Aldi Nord, 100+ Mio. USD VC), AWM <sup class="sn" title="Quelle [5]: awm.tech">[5]</sup> (Walmart), VusionGroup/SES-imagotag <sup class="sn" title="Quelle [6]: vusion.com">[6]</sup> (ESL-Marktführer, börsennotiert) sind im Retail stark. Direkter Wettbewerb nicht empfohlen — Gastronomie zuerst als Wedge-Markt.</div>
 </div>
 
 <!-- ═══ 6. STRATEGIE & GTM ═══ -->
@@ -685,6 +905,187 @@ html.is-mobile .shelf-and-specs{flex-direction:column!important}
   <div class="info-box"><strong>Zwei-Markt-Logik:</strong> Gleiche Hardware-Plattform — zwei Märkte. Gastro (<strong>250.000+ Betriebe</strong>) als Wedge mit geringstem Wettbewerbsdruck. Retail (<strong>60.000+ Standorte</strong>, 80–600 Regale/Filiale) als Skalierungsmarkt ab Jahr 2. Kombinierter adressierbarer Markt DACH: <strong>&gt;310.000 potenzielle Standorte</strong>.</div>
 </div>
 
+<!-- ═══ 8. QUELLEN ═══ -->
+<div class="panel" id="panel-quellen">
+
+  <div class="info-box">Alle hochgestellten Zahlen im Dokument (<sup class="sn" style="position:static;font-size:10px">[1]</sup>…<sup class="sn" style="position:static;font-size:10px">[16]</sup>) verweisen auf die nachfolgenden Quellen. Fahren Sie mit der Maus über eine Hochzahl, um den Quellnamen direkt anzuzeigen.</div>
+
+  <div class="src-grid">
+
+    <div class="src-card">
+      <div class="src-card-head">Marktdaten — Einzelhandel</div>
+      <div class="src-list">
+        <div class="src-item">
+          <div class="src-num">[1]</div>
+          <div class="src-body">
+            <div class="src-name">EHI Retail Institute – Stationärer Einzelhandel Deutschland 2025</div>
+            <div class="src-detail">Umsatzranking und Standortdaten des stationären Einzelhandels im deutschsprachigen Raum.</div>
+            <a class="src-link" href="https://www.handelsdaten.de/deutschsprachiger-einzelhandel/umsatzranking-vertriebslinien-stationarer-einzelhandel-deutschland" target="_blank">handelsdaten.de → Umsatzranking</a>
+            <div><span class="src-tag">Markt</span> <span class="src-tag">Einzelhandel</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[2]</div>
+          <div class="src-body">
+            <div class="src-name">filialstandorte.de – Supermarkt-Datenbank Deutschland</div>
+            <div class="src-detail">Umfassende Datenbank aller Supermarkt- und Discounter-Standorte in Deutschland (Stand 10/2025).</div>
+            <span class="src-link" style="cursor:default;color:var(--muted)">filialstandorte.de (Datenbankzugang)</span>
+            <div><span class="src-tag">Standorte</span> <span class="src-tag">Einzelhandel</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[3]</div>
+          <div class="src-body">
+            <div class="src-name">Lebensmittel Praxis – Top 30 LEH Deutschland 2025</div>
+            <div class="src-detail">Jährliches Ranking der 30 umsatzstärksten Lebensmitteleinzelhändler in Deutschland mit Standort- und Umsatzdaten.</div>
+            <a class="src-link" href="https://lebensmittelpraxis.de/top-30-unternehmen-im-leh.html" target="_blank">lebensmittelpraxis.de → Top 30 LEH</a>
+            <div><span class="src-tag">Rankings</span> <span class="src-tag">Umsatzdaten</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[14]</div>
+          <div class="src-body">
+            <div class="src-name">GS1 Germany – Out-of-Stock-Studie Konsumgüter</div>
+            <div class="src-detail">Studie zur Out-of-Stock-Rate im deutschen Lebensmitteleinzelhandel: Ursachen, Häufigkeit und Umsatzwirkung.</div>
+            <a class="src-link" href="https://www.gs1-germany.de" target="_blank">gs1-germany.de</a>
+            <div><span class="src-tag">OOS</span> <span class="src-tag">Studie</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="src-card">
+      <div class="src-card-head">Wettbewerber & Technologie-Anbieter</div>
+      <div class="src-list">
+        <div class="src-item">
+          <div class="src-num">[4]</div>
+          <div class="src-body">
+            <div class="src-name">Trigo Vision</div>
+            <div class="src-detail">Computer-Vision-basiertes Retail-Automatisierungssystem. Kunden: REWE, Aldi Nord. Finanzierung: >100 Mio. USD.</div>
+            <a class="src-link" href="https://www.trigoretail.com/" target="_blank">trigoretail.com</a>
+            <div><span class="src-tag">Wettbewerber</span> <span class="src-tag">Retail-Tech</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[5]</div>
+          <div class="src-body">
+            <div class="src-name">AWM Smart Shelf</div>
+            <div class="src-detail">Sensorbasiertes Smart-Shelf-System für den US-amerikanischen Einzelhandel (u.a. Walmart-Piloten).</div>
+            <a class="src-link" href="https://www.awm.tech/" target="_blank">awm.tech</a>
+            <div><span class="src-tag">Wettbewerber</span> <span class="src-tag">Retail-Tech</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[6]</div>
+          <div class="src-body">
+            <div class="src-name">SES-imagotag / VusionGroup</div>
+            <div class="src-detail">Marktführer für elektronische Preisschilder (ESL) und Digital-Shelf-Lösungen. Börsennotiert (EPA: SESL). Kunden: Carrefour, Walmart, MediaMarkt.</div>
+            <a class="src-link" href="https://www.vusion.com/" target="_blank">vusion.com</a>
+            <div><span class="src-tag">Wettbewerber</span> <span class="src-tag">ESL</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[7]</div>
+          <div class="src-body">
+            <div class="src-name">Bizerba SmartShelf</div>
+            <div class="src-detail">Automatisiertes Inventar-Management-System mit Wägesensorik für Bäckereien und Frischeabteilungen.</div>
+            <a class="src-link" href="https://innovations.bizerba.com/smart-shelf-for-automated-inventory-management/" target="_blank">innovations.bizerba.com → Smart Shelf</a>
+            <div><span class="src-tag">Wettbewerber</span> <span class="src-tag">Sensor</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[8]</div>
+          <div class="src-body">
+            <div class="src-name">Nexmosphere XZ-S41</div>
+            <div class="src-detail">Pick-up-Sensor-Modul für Retail-Regale. Erkennt Produktentnahmen per kapazitivem Sensing. Referenz für Sensor-Hardware-Benchmarks.</div>
+            <a class="src-link" href="https://www.nexmosphere.com/products/xzs41" target="_blank">nexmosphere.com → XZ-S41</a>
+            <div><span class="src-tag">Sensor-HW</span> <span class="src-tag">Benchmark</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="src-card">
+      <div class="src-card-head">Gastronomie & Foodservice</div>
+      <div class="src-list">
+        <div class="src-item">
+          <div class="src-num">[10]</div>
+          <div class="src-body">
+            <div class="src-name">DEHOGA Bundesverband – Zahlenspiegel 2024/2025</div>
+            <div class="src-detail">Kennzahlen der deutschen Gastronomie und Hotellerie: Betriebszahlen, Umsätze, Kostenstrukturen, Ertragserwartungen.</div>
+            <a class="src-link" href="https://www.dehoga-bundesverband.de/zahlen-fakten/zahlenspiegel/" target="_blank">dehoga-bundesverband.de → Zahlenspiegel</a>
+            <div><span class="src-tag">Gastro</span> <span class="src-tag">Statistik</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[11]</div>
+          <div class="src-body">
+            <div class="src-name">WWF Deutschland / United Against Waste – Dialogforum AHV</div>
+            <div class="src-detail">Studie mit 7 Modellbetrieben der Außer-Haus-Verpflegung: Ø 25% Lebensmittelabfall-Reduktion (Spanne: 10–52%) durch systematisches Monitoring.</div>
+            <a class="src-link" href="https://united-against-waste.de" target="_blank">united-against-waste.de</a>
+            <div><span class="src-tag">Food Waste</span> <span class="src-tag">Praxisstudie</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[12]</div>
+          <div class="src-body">
+            <div class="src-name">BMLEH – Nationale Strategie zur Reduzierung der Lebensmittelverschwendung</div>
+            <div class="src-detail">Bundesministerium für Landwirtschaft: 1,9 Mio. t Lebensmittelabfälle in der Außer-Haus-Verpflegung jährlich. EU-Ziel: Halbierung bis 2030.</div>
+            <a class="src-link" href="https://www.bmel.de/DE/themen/ernaehrung/lebensmittelverschwendung/lebensmittelverschwendung_node.html" target="_blank">bmel.de → Lebensmittelverschwendung</a>
+            <div><span class="src-tag">Regulierung</span> <span class="src-tag">Food Waste</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="src-card">
+      <div class="src-card-head">Marktforschung & KI-Studien</div>
+      <div class="src-list">
+        <div class="src-item">
+          <div class="src-num">[9]</div>
+          <div class="src-body">
+            <div class="src-name">Dataintelo – Smart Retail Shelf Sensor Market Report 2034</div>
+            <div class="src-detail">Globale Marktprognose für intelligente Regalsensoren im Einzelhandel: Marktgröße, Wachstumsraten, Segmentierung nach Technologie und Region bis 2034.</div>
+            <span class="src-link" style="cursor:default;color:var(--muted)">dataintelo.com (Marktforschungsbericht, kostenpflichtig)</span>
+            <div><span class="src-tag">Marktprognose</span> <span class="src-tag">Sensor-Markt</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[13]</div>
+          <div class="src-body">
+            <div class="src-name">McKinsey &amp; Company – „AI in Retail: The Next Frontier"</div>
+            <div class="src-detail">Analyse des McKinsey Global Institute zu KI-gestützter Bedarfsprognose im Einzelhandel. Kernaussage: Demand Forecasting mit KI reduziert Lagerkosten um 20–50% und Out-of-Stock um 65%.</div>
+            <a class="src-link" href="https://www.mckinsey.com/industries/retail/our-insights" target="_blank">mckinsey.com → Retail Insights</a>
+            <div><span class="src-tag">KI</span> <span class="src-tag">Demand Forecasting</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[15]</div>
+          <div class="src-body">
+            <div class="src-name">Gartner – „Predicts 2025: AI in Supply Chain &amp; Retail Operations"</div>
+            <div class="src-detail">Gartner-Prognose zu KI-Einsatz in Lieferkette und Retail: bis 2027 werden 75% der Lebensmittelhändler KI-gestützte Nachfrageprognosen einsetzen.</div>
+            <a class="src-link" href="https://www.gartner.com/en/supply-chain" target="_blank">gartner.com → Supply Chain Research</a>
+            <div><span class="src-tag">KI</span> <span class="src-tag">Prognose</span></div>
+          </div>
+        </div>
+        <div class="src-item">
+          <div class="src-num">[16]</div>
+          <div class="src-body">
+            <div class="src-name">Statista – Markt- und Branchendaten Gastronomie Deutschland 2025</div>
+            <div class="src-detail">Statistische Kennzahlen zur deutschen Gastronomie: Betriebsanzahl, Umsatzentwicklung, Beschäftigte, Kostenstruktur.</div>
+            <a class="src-link" href="https://www.statista.com/topics/1672/gastronomy-in-germany/" target="_blank">statista.com → Gastronomy Germany</a>
+            <div><span class="src-tag">Statistik</span> <span class="src-tag">Gastro</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="warn-box" style="font-size:11px"><strong>Hinweis zur Quellenarbeit:</strong> Marktforschungsberichte (Dataintelo, Gartner) enthalten teils kostenpflichtige Vollversionen. Öffentlich zugängliche Zusammenfassungen und Pressemitteilungen wurden zur Validierung der Zahlen herangezogen. Alle Branchenverbandsdaten (DEHOGA, EHI, GS1) beruhen auf primären Veröffentlichungen der Verbände.</div>
+
+</div>
+
 </div><!-- /panels -->
 
 <script>
@@ -745,7 +1146,7 @@ Chart.defaults.color='#64748b';
 Chart.defaults.borderColor='#dde2ea';
 const BL='rgba(29,78,216,0.75)',AM='rgba(180,83,9,0.75)',GR='rgba(21,128,61,0.6)',RD='rgba(185,28,28,0.7)';
 
-window._ci={overview:false};
+window._ci={overview:false,smartorder:false,quellen:false};
 
 function initCharts(panel){
   if(panel==='overview'){
@@ -758,6 +1159,7 @@ function initCharts(panel){
   if(panel==='preise'){
     new Chart(document.getElementById('chart_margin'),{type:'bar',data:{labels:['S','M','L','XL'],datasets:[{label:'Herstellkosten',data:[1250,1800,2250,2850],backgroundColor:'rgba(148,163,184,0.6)',borderRadius:3},{label:'Bruttomarge Hardware',data:[1740,2690,2740,3140],backgroundColor:BL,borderRadius:3},{label:'Software 36 Mo.',data:[948,1188,1428,1668],backgroundColor:GR,borderRadius:3}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10}}},scales:{y:{grid:{color:'#eef0f4'},stacked:false,ticks:{callback:v=>v.toLocaleString('de')+'€'}},x:{grid:{display:false}}}}});
   }
+  if(panel==='smartorder'||panel==='quellen'){/* no charts */}
   if(panel==='wettbewerb'){
     new Chart(document.getElementById('chart_competitor'),{type:'bubble',data:{datasets:[
       {label:'SmartShelf (wir)',data:[{x:8.5,y:9,r:14}],backgroundColor:'rgba(29,78,216,0.85)',borderColor:'#1d4ed8',borderWidth:2},
